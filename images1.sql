@@ -1,1 +1,0 @@
-SELECT * FROM image_upload.images1;	
