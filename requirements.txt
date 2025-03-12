@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 flask
 flask-cors
 gunicorn
@@ -7,3 +8,14 @@ pillow
 requests
 tensorflow
 mediapipe
+=======
+flask
+flask-cors
+gunicorn
+opencv-python
+numpy
+pillow
+requests
+tensorflow
+mediapipe
+>>>>>>> 44e89e2 (Initialized Git and added Procfile)
