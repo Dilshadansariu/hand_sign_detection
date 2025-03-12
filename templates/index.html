@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Sign Detection</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E3F2FD; /* Dark bluish-gray */
+            text-align: center;
+        }
+        header {
+            background: #64B5F6;
+            color: white;
+            padding: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        main {
+            margin: 20px auto;
+            padding: 20px;
+            width: 80%;
+            background: white;
+            max-width: 600px;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        video {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background: #64B5F6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #0056b3; /*42A5F5*/
+        }
+        canvas {
+            display: none;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        footer {
+            margin-top: 20px;
+            background: #1565C0;
+            color: white;
+            padding: 15px;
+        }
+
+        footer a {
+            color: #BBDEFB;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        footer a:hover {
+            color: #E3F2FD;
+        }
+    
+    </style>
+
+</head>
+<body>
+
+    <header>Hand Sign Detection</header>
+    <main>
+        <video id="video" autoplay></video>
+        <br>
+        <button id="captureBtn">Capture & Predict</button>
+        <canvas id="canvas"></canvas>
+        <p id="result">Prediction: Waiting...</p>
+    </main>
+   
+
+    <script>
+        // Start video stream
+        const video = document.getElementById("video");
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => console.error("Error accessing webcam:", err));
+
+        document.getElementById("captureBtn").addEventListener("click", async () => {
+            // Capture image from video
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert to Base64
+            const base64Image = canvas.toDataURL("image/jpeg");
+
+            // Send to Flask API
+            const response = await fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ image: base64Image })
+            });
+
+            const result = await response.json();
+            document.getElementById("result").innerText = `Prediction: ${result.predicted_label || "Error"}`;
+        });
+    </script>
+     <footer> Hand Sign Detection
+        <p>Contact:<a href="https://mail.google.com/" target="_blank">dilshadansariu@gmail.com</a> | +91 9876543210</p>
+        <p>
+            <a href="https://github.com/Dilshadansariu" target="_blank">GitHub</a> |
+            <a href="https://instagram.com/_tobi__.02" target="_blank">Instagram</a>
+        </p>
+    </footer>
+
+</body>
+</html>

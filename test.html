@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Sign Detection</title>
+</head>
+<body>
+    <h2>Upload Image for Prediction</h2>
+    <input type="file" id="imageInput">
+    <button onclick="predictSign()">Predict</button>
+    <p><b>Prediction:</b> <span id="result">Waiting...</span></p>
+
+    <script>
+        async function predictSign() {
+            let input = document.getElementById("imageInput").files[0];
+            if (!input) {
+                alert("Please select an image first.");
+                return;
+            }
+
+            let reader = new FileReader();
+            reader.onloadend = async function () {
+                let base64Image = reader.result.split(',')[1]; // Removing prefix
+                let response = await fetch("http://127.0.0.1:5000/predict", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ image: base64Image })
+                });
+
+                let data = await response.json();
+                document.getElementById("result").innerText = data.prediction || "Error";
+            };
+
+            reader.readAsDataURL(input);
+        }
+    </script>
+</body>
+</html>
