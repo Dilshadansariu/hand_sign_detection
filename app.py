@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
 # Load the hand sign model
-with open("C:/Users/DELL/Desktop/hand_sign_detection/hand_sign_model.json", "r") as json_file:
+with open("hand_sign_model.json", "r") as json_file:
     loaded_model_json = json_file.read()
 loaded_model = model_from_json(loaded_model_json)
 loaded_model.load_weights("C:/Users/DELL/Desktop/hand_sign_detection/hand_sign_model.h5")
